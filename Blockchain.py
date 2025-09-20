@@ -1,3 +1,7 @@
+from blake3 import blake3
+import json
+
+
 class Blockchain(object):
     """
     ---------------------------------------------------------------------------------------
@@ -28,10 +32,22 @@ class Blockchain(object):
         # Adds a new transaction to the list of transactions
         pass
 
-    @staticmethod
+    @staticmethod   
     def hash(block):
         # Creates a SHA-256 hash of a Block
-        pass
+        """
+        Creates a BLAKE3 hash of a Block 
+
+        Params: 
+            block (dict): Block
+
+        Returns:
+            str: The hash of the block in hexadecimal format.       
+        """
+
+        block_string = json.dumps(block, sort_keys = True).encode()
+
+        return blake3(block_string).hexdigest()
 
 
     @property
