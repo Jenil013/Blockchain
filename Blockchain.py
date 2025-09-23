@@ -35,7 +35,21 @@ class Blockchain(object):
         Returns:
             dict: New Block
         """
-        pass
+        block = {
+            'index': len(self.chain) + 1,
+            'transactions': self.current_transaction,
+            'proof': proof,
+            'previous_hash': previous_hash or self.hash(self.chain[-1])
+        }
+        #empting the current transcation
+        self.current_transaction = []
+
+
+        self.chain.append(block)
+        return block
+    
+
+
 
     def new_transaction(self, sender, recipient, amount):
         """
@@ -49,7 +63,15 @@ class Blockchain(object):
         Returns:
             int: The index of the Block that will hold this transaction
         """
-        pass
+        
+        self.current_transaction.append({
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount
+        })
+        #indicating the new index in block
+        return self.last_block['index'] + 1
+    
 
     @staticmethod   
     def hash(block):
@@ -72,6 +94,23 @@ class Blockchain(object):
     @property
     def last_block(self):
         # Returns the last Block in the chain
+        return self.chain[-1]
+        
 
-        pass
+    @staticmethod
+    def valid_proof(last_proof, proof):
 
+        guess = f"{last_proof}{proof}".encode()
+        hash = blake3(guess).hexdigest()
+        return hash[:4] == "1234"
+    
+    def proof_of_work(self, last_proof):
+        proof = 0
+        while self.valid_proof(last_proof, proof) != True:
+            proof += 1
+
+        return proof
+
+
+
+        
