@@ -24,12 +24,31 @@ class Blockchain(object):
         self.chain = []
         self.current_transaction = []
 
-    def new_block(self):
-        # Creates a new Block and adds it to the 
+    def new_block(self, proof, previous_hash = None):
+        """
+        Creates a new block and adds it to the chain.
+
+        Parameters:
+            proof (int): The proof given by the Proof of Work algorithm.
+            previous_hash (str, optional): Hash of previous Block. Defaults to None.
+
+        Returns:
+            dict: New Block
+        """
         pass
 
-    def new_transaction(self):
-        # Adds a new transaction to the list of transactions
+    def new_transaction(self, sender, recipient, amount):
+        """
+        Creates a new transaction to go into the next mined Block
+
+        Parameters:
+            sender (str): Address of the Sender
+            recipient (str): Address of the Recipient
+            amount (float): Amount
+
+        Returns:
+            int: The index of the Block that will hold this transaction
+        """
         pass
 
     @staticmethod   
