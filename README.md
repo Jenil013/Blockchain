@@ -1,6 +1,6 @@
 # 🔗 Blockchain in Python
 
-A simple blockchain implementation in Python, inspired by [Learn Blockchains by Building One](https://hackernoon.com/learn-blockchains-by-building-one-117428612f46).  
+A simple blockchain implementation in Python.
 This project is built for learning purposes and demonstrates the fundamentals of how blockchains work.
 
 ---
