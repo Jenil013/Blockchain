@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request    
-import Blockchain
+from blockchain import Blockchain
 from uuid import uuid4  
 import hashlib
 import json
