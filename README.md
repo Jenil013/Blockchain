@@ -15,3 +15,14 @@ This project is built for learning purposes and demonstrates the fundamentals of
 ---
 
 ## 📂 Project Structure
+
+
+
+## Typical flow you’ll follow:
+1. **Check the chain** → /chain
+
+2. **Add transactions** → /transaction/new
+
+3. **Mine a block** → /mine (this commits transactions into the blockchain)
+
+4. **Check the chain again** → see your new block with the transactions

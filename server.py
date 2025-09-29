@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request    
-import Blockchain
+from Blockchain import Blockchain
 from uuid import uuid4  
 import hashlib
 import json
@@ -44,7 +44,7 @@ def mine():
 
 
 
-@app.route('/transaction/new', methods = ['POST'])
+@app.route('/transactions/new', methods = ['POST'])
 def new_transaction():
     
     values = request.get_json()
@@ -75,5 +75,5 @@ def chain():
     return jsonify(response), 200
 
 
-if __name__ == 'main':
-    app.run(host = '0.0.0.0' , port = 5000)
+if __name__ == '__main__':
+    app.run(host = '0.0.0.0' , port = 5000, debug = True)
