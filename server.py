@@ -23,11 +23,11 @@ def mine():
 
     proof = blockchain.proof_of_work(last_proof)
 
-    #rewarding the miner 'considiring 0 as a system'
+    #rewarding the miner, considering 0 as a system'
 
     blockchain.new_transaction(sender = "0", recipient = node_identifier, amount = 1)
 
-    #forge the new block by adding into the chain
+    #forge the new block by adding to the chain
     previous_hash = blockchain.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
     
@@ -54,10 +54,10 @@ def new_transaction():
     if not all(k in values for k in required):
         return 'Missing Values', 400
     
-    #create a new transcation 
+    #create a new transaction 
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    response = {'meesage': f'Transcation will be added at {index}'}
+    response = {'message': f'Transaction will be added at {index}'}
 
     return jsonify(response), 201
 
@@ -68,12 +68,12 @@ def new_transaction():
 @app.route('/chain', methods=['GET'])
 def chain():
     response = {
-        'chain' : blockchain.chain,
-        'length' : len(blockchain.chain)
+        'chain': blockchain.chain,
+        'length': len(blockchain.chain)
     }
 
     return jsonify(response), 200
 
 
 if __name__ == 'main':
-    app.run(host = '0.0.0.0' , post = 5000)
+    app.run(host = '0.0.0.0' , port = 5000)
