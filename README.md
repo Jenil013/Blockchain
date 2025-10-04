@@ -18,15 +18,6 @@ This repository implements a *minimal* blockchain (blocks, transactions, proof-o
 
 ---
 
-## 🔍 What makes this README "interactive"?
-
-- Clear, copy-paste command examples (curl & Python) so you can try the API immediately.
-- Postman examples to import and play with the API visually.
-- Endpoint request/response examples so you can paste into your terminal or REST client.
-- Troubleshooting tips and quick debugging checklist.
-
----
-
 ## 📁 Project structure (quick)
 
 - `server.py` — small Flask web server exposing endpoints to interact with the chain.
@@ -44,8 +35,10 @@ This repository implements a *minimal* blockchain (blocks, transactions, proof-o
 
 ```bash
 python -m venv .venv
+
 # Windows
 .venv\Scripts\activate
+
 # macOS / Linux
 source .venv/bin/activate
 
@@ -63,8 +56,6 @@ pip install Flask blake3
 ```bash
 python server.py
 ```
-
-> If nothing happens, make sure the `if __name__ == '__main__':` guard is spelled correctly in `server.py`. (Common bug: `if __name__ == 'main':` will **not** start the app.)
 
 ---
 
@@ -145,7 +136,23 @@ curl -X GET http://127.0.0.1:5000/chain
 - Proof-of-work uses a simple check where the hex digest of `blake3(str(last_proof)+str(proof))` must start with `"1234"`.
 - Mining rewards are granted by adding a transaction with `sender = "0"` and `recipient = <node id>`.
 
-> For exact implementation you can inspect `Blockchain.py` and `server.py`.
+> For exact implementation, you can inspect `Blockchain.py` and `server.py`.
+
+---
+
+## ⚖️ Consensus Algorithm (Resolving Conflicts)
+
+The blockchain implements a simple consensus mechanism known as Longest Chain Rule to ensure all nodes remain in agreement.
+
+Each node keeps its own version of the chain. When a conflict occurs (e.g., another node’s chain differs), the algorithm:
+
+**1.** Requests the /chain endpoint from all registered nodes.
+
+**2.** Validates each chain by checking that every block’s previous_hash matches the hash of the block before it and that proofs of work are valid.
+
+**3.** Replaces its own chain with the longest valid chain found.
+
+This ensures the network always agrees on a single, most credible chain.
 
 ---
 
@@ -162,14 +169,6 @@ Create a simple collection with the three endpoints above. Example Postman body 
 ```
 
 ---
-
-## 🧪 Tests & Development
-
-- Add unit tests for `Blockchain.new_block`, `new_transaction`, `hash`, `proof_of_work`, and `valid_proof`.
-- Consider adding a small `tests/` folder and run with `pytest`.
-
----
-
 
 ## ✅ Contribution guide
 
