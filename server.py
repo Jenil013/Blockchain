@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request    
+from flask import Flask, jsonify, request 
 from Blockchain import Blockchain
 from uuid import uuid4  
 import hashlib
@@ -74,6 +74,51 @@ def chain():
 
     return jsonify(response), 200
 
+@app.route('/nodes/register', methods = ['POST'])
+def register_nodes():
+    values = request.get_json()
+
+    nodes = values.get('nodes')
+
+    if nodes is None:
+        return "Error: Please input the valid list of nodes", 200
+    
+    for node in nodes:
+        blockchain.register_node(node)
+
+    response = {
+        'Message': "The nodes have been registered successfully", 
+        'Total_nodes': list(blockchain.nodes)
+    }
+
+    return jsonify(response), 201
+
+@app.route('/node/resolve', methods = ['GET'])
+def consensus():
+
+    resolve = blockchain.resolve_conflicts()
+
+    if resolve:
+        response = {
+            'message': "Our chain was replaced", 
+            'new-chain': blockchain.chain
+        }
+
+    else:
+        response = {
+            'message': "Chain was Authoritative.",
+            'chain': blockchain.chain
+        }
+
+    return jsonify(response), 200
+
+
+
+
+
+
+  
+
 
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0' , port = 5000, debug = True)
+    app.run(host = '0.0.0.0' , port = 5001, debug = True)
