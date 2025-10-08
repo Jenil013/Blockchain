@@ -145,7 +145,7 @@ class Blockchain(object):
             print(f'{last_block}')
             print(f'{block}')
             
-            if block['previous_hash'] != self.hash('last_block'):   # Check that the hash of the last block is correct
+            if block['previous_hash'] != self.hash(last_block): # Check that the hash of the last block is correct
                 return False
             if not self.valid_proof(last_block['proof'], block['proof']):   # Check that the Proof of Work is correct
                 return False

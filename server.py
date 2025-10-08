@@ -5,8 +5,15 @@ import hashlib
 import json
 from textwrap import dedent  
 
+from flask import render_template
+
 #Instantiating the app
 app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    return render_template('blockchain_frontend.html')
 
 # Generate a globally unique address for this node
 node_identifier = str(uuid4()).replace('-', '')
@@ -114,11 +121,16 @@ def consensus():
 
 
 
-
-
-
-  
-
-
 if __name__ == '__main__':
-    app.run(host = '0.0.0.0' , port = 5001, debug = True)
+    import sys
+    
+    # Default port
+    port = 5000
+    
+    # Check for --port argument
+    if '--port' in sys.argv:
+        port_index = sys.argv.index('--port')
+        if port_index + 1 < len(sys.argv):
+            port = int(sys.argv[port_index + 1])
+    
+    app.run(host='0.0.0.0', port=port, debug=True)

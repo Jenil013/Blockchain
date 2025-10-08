@@ -32,6 +32,13 @@ This repository implements a *minimal* blockchain (blocks, transactions, proof-o
 - `server.py` — small Flask web server exposing endpoints to interact with the chain.
 - `Blockchain.py` — core blockchain class (blocks, transactions, BLAKE3 hashing, proof-of-work).
 - `README.md` — (you’re looking at it)
+- `blockchain_frontend.html` — Frontend for the app
+
+---
+
+## 🖼️ Home Page Preview
+
+![Blockchain Manager Home Page](homepage.png)
 
 ---
 
