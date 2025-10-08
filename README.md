@@ -29,7 +29,7 @@ This repository implements a *minimal* blockchain (blocks, transactions, proof-o
 
 ## 🖼️ Home Page Preview
 
-![Blockchain Manager Home Page](homepage.png)
+![Blockchain Manager Home Page](https://github.com/Jenil013/Blockchain/blob/main/Homepage.png)
 
 ---
 
