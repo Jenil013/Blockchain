@@ -323,10 +323,18 @@
                 <p style="text-align: center; color: #999;">Click "View Full Chain" to load the blockchain</p>
             </div>
         </div>
+
+        <div class="card full-width">
+            <h2>📜 Transaction History (MongoDB)</h2>
+            <button class="btn-view" onclick="viewTransactions()" style="margin-bottom: 15px;">View Transaction History</button>
+            <div id="transactionDisplay" class="chain-container">
+                <p style="text-align: center; color: #999;">Click "View Transaction History" to load stored transactions</p>
+            </div>
+        </div>
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000';
+        const API_URL = '';
         let currentNodeId = '';
 
         // Initialize
@@ -519,6 +527,50 @@
                 showAlert('Error resolving conflicts. Make sure the server is running.', 'error');
                 console.error('Error:', error);
             }
+        }
+
+        async function viewTransactions() {
+            try {
+                const response = await fetch(`${API_URL}/transactions`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayTransactions(data.transactions);
+                }
+            } catch (error) {
+                document.getElementById('transactionDisplay').innerHTML = 
+                    '<p style="text-align: center; color: #e74c3c;">❌ Unable to fetch transactions from server.</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        function displayTransactions(transactions) {
+            const container = document.getElementById('transactionDisplay');
+            container.innerHTML = '';
+
+            if (transactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">No transactions stored yet.</p>';
+                return;
+            }
+
+            transactions.forEach((tx, i) => {
+                const txDiv = document.createElement('div');
+                txDiv.className = 'block';
+                txDiv.style.borderLeftColor = '#f093fb';
+                txDiv.innerHTML = `
+                    <div class="block-header">
+                        <span>Transaction #${i + 1}</span>
+                        <span style="font-size: 0.85em; color: #888;">${tx.timestamp || ''}</span>
+                    </div>
+                    <div class="block-content">
+                        <div><strong>Sender:</strong> ${tx.sender}</div>
+                        <div><strong>Recipient:</strong> ${tx.recipient}</div>
+                        <div><strong>Amount:</strong> ${tx.amount} units</div>
+                        <div><strong>Target Block:</strong> #${tx.block_index}</div>
+                    </div>
+                `;
+                container.appendChild(txDiv);
+            });
         }
     </script>
 </body>

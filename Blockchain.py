@@ -2,6 +2,8 @@ from urllib.parse import urlparse
 from blake3 import blake3
 import json
 import requests
+from datetime import datetime
+from db_config import transactions_collection, blocks_collection
 
 
 class Blockchain(object):
@@ -27,8 +29,12 @@ class Blockchain(object):
         self.current_transaction = []
         self.nodes = set()
 
-        #create the genesis block
-        self.new_block(proof = 100, previous_hash = '1')
+        # Load existing chain from MongoDB, or create genesis block
+        saved_blocks = list(blocks_collection.find({}, {'_id': 0}).sort('index', 1))
+        if saved_blocks:
+            self.chain = saved_blocks
+        else:
+            self.new_block(proof = 100, previous_hash = '1')
 
 
     def new_block(self, proof, previous_hash = None):
@@ -51,8 +57,11 @@ class Blockchain(object):
         #empting the current transcation
         self.current_transaction = []
 
-
         self.chain.append(block)
+
+        # Persist block to MongoDB
+        blocks_collection.insert_one(dict(block))
+
         return block
     
 
@@ -71,13 +80,27 @@ class Blockchain(object):
             int: The index of the Block that will hold this transaction
         """
         
-        self.current_transaction.append({
+        transaction = {
             'sender': sender,
             'recipient': recipient,
             'amount': amount
-        })
+        }
+
+        self.current_transaction.append(transaction)
+
+        # Persist transaction to MongoDB
+        block_index = self.last_block['index'] + 1
+        db_record = {
+            'sender': sender,
+            'recipient': recipient,
+            'amount': amount,
+            'block_index': block_index,
+            'timestamp': datetime.utcnow().isoformat()
+        }
+        transactions_collection.insert_one(db_record)
+
         #indicating the new index in block
-        return self.last_block['index'] + 1
+        return block_index
     
 
     @staticmethod   

@@ -6,6 +6,7 @@ import json
 from textwrap import dedent  
 
 from flask import render_template
+from db_config import transactions_collection
 
 #Instantiating the app
 app = Flask(__name__)
@@ -119,6 +120,12 @@ def consensus():
 
     return jsonify(response), 200
 
+
+@app.route('/transactions', methods=['GET'])
+def get_transactions():
+    """Retrieve all transactions stored in MongoDB"""
+    transactions = list(transactions_collection.find({}, {'_id': 0}))
+    return jsonify({'transactions': transactions, 'count': len(transactions)}), 200
 
 
 if __name__ == '__main__':
