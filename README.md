@@ -1,6 +1,6 @@
 # 🔗 Blockchain in Python 
 
-> A lightweight, educational blockchain implemented in Python with a small Flask API. Perfect for learning how blocks, transactions, and proof-of-work fit together.  
+> A lightweight, educational blockchain implemented in Python with Flask and MongoDB. Features blocks, transactions, proof-of-work, consensus, and persistent storage via MongoDB.  
 
 >By Jenil Patel & Khushbu Talaviya
 
@@ -38,7 +38,26 @@ This repository implements a *minimal* blockchain (blocks, transactions, proof-o
 **Requirements**
 
 - Python 3.10+
-- Create and activate a venv
+- Docker (for MongoDB and Mongo Express)
+
+**1. Start MongoDB and Mongo Express with Docker**
+
+```bash
+# Start MongoDB
+docker run -d --name mongodb -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=qwerty \
+  mongo
+
+# Start Mongo Express (web UI for MongoDB)
+docker run -d --name mongo-express -p 8081:8081 \
+  -e ME_CONFIG_MONGODB_ADMINUSERNAME=admin \
+  -e ME_CONFIG_MONGODB_ADMINPASSWORD=pass \
+  -e ME_CONFIG_MONGODB_URL=mongodb://admin:qwerty@host.docker.internal:27017/ \
+  mongo-express
+```
+
+**2. Create and activate a virtual environment**
 
 ```bash
 python -m venv .venv
@@ -50,12 +69,6 @@ python -m venv .venv
 source .venv/bin/activate
 
 pip install -r requirements.txt
-```
-
-If you don't have a `requirements.txt`, install minimal dependencies directly:
-
-```bash
-pip install Flask blake3
 ```
 
 **Run the server**
@@ -135,6 +148,35 @@ Response: 200 OK
 curl -X GET http://127.0.0.1:5000/chain
 ```
 
+### 4) View all transactions (from MongoDB)
+
+```
+GET /transactions
+```
+
+Response: 200 OK
+
+```json
+{
+  "transactions": [
+    {
+      "sender": "alice",
+      "recipient": "bob",
+      "amount": 5,
+      "block_index": 2,
+      "timestamp": "2026-03-12T23:28:18.000000"
+    }
+  ],
+  "count": 1
+}
+```
+
+**curl**
+
+```bash
+curl -X GET http://127.0.0.1:5000/transactions
+```
+
 ---
 
 ## 🧠 Implementation details & highlights
@@ -144,6 +186,25 @@ curl -X GET http://127.0.0.1:5000/chain
 - Mining rewards are granted by adding a transaction with `sender = "0"` and `recipient = <node id>`.
 
 > For exact implementation, you can inspect `Blockchain.py` and `server.py`.
+
+---
+
+## 🗄️ MongoDB Persistence
+
+All blockchain data is persisted to a **MongoDB** database (`blockchain_db`) running in Docker, ensuring that the chain and transactions survive server restarts.
+
+| Collection     | Description                                                          |
+| -------------- | -------------------------------------------------------------------- |
+| `blocks`       | Stores every block (index, proof, previous_hash, transactions).      |
+| `transactions` | Stores every transaction (sender, recipient, amount, timestamp).     |
+
+**How it works:**
+
+- On **server startup**, the `Blockchain` class checks MongoDB for existing blocks. If found, the chain is loaded from the database. Otherwise, a fresh genesis block is created.
+- When a **new block is mined**, it is appended to the in-memory chain *and* inserted into the `blocks` collection.
+- When a **new transaction is created**, it is added to the pending transactions *and* inserted into the `transactions` collection with a UTC timestamp.
+
+**Mongo Express** is available at `http://localhost:8081` to browse the stored data visually.
 
 ---
 
